@@ -11,8 +11,8 @@ Model name is converted to lowercase for the collection name:
 - BlogPost -> "blogs" collection
 """
 
-from pydantic import BaseModel, Field
-from typing import Optional
+from pydantic import BaseModel, Field, HttpUrl
+from typing import Optional, List, Literal
 
 # Example schemas (replace with your own):
 
@@ -37,6 +37,26 @@ class Product(BaseModel):
     price: float = Field(..., ge=0, description="Price in dollars")
     category: str = Field(..., description="Product category")
     in_stock: bool = Field(True, description="Whether product is in stock")
+
+# AI Toolbox schemas
+
+PricingType = Literal["free", "freemium", "paid", "open-source"]
+
+class Tool(BaseModel):
+    """
+    AI tools catalog
+    Collection name: "tool"
+    """
+    name: str = Field(..., description="Tool name")
+    description: str = Field(..., description="What it does in one or two sentences")
+    categories: List[str] = Field(default_factory=list, description="High-level categories like 'chatbot', 'image', 'video', 'code', 'automation'")
+    use_cases: List[str] = Field(default_factory=list, description="Common tasks this tool is good at")
+    tags: List[str] = Field(default_factory=list, description="Keywords for matching and filtering")
+    pricing: PricingType = Field("freemium", description="Pricing model")
+    link: Optional[HttpUrl] = Field(None, description="Official website")
+    rating: Optional[float] = Field(None, ge=0, le=5, description="Community rating 0-5")
+    company: Optional[str] = Field(None, description="Vendor or creator")
+    model: Optional[str] = Field(None, description="Underlying model if relevant")
 
 # Add your own schemas here:
 # --------------------------------------------------
